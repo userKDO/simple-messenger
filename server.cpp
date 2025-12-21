@@ -7,18 +7,34 @@
 #include <cstring>
 
 #define BUFFER_SIZE 2048
+#define PORT 8080
 
-void recieve_message()
+void recieve_message(int client)
 {
-	
+	char buffer[BUFFER_SIZE];
+	while (1) {
+		std::memset(buffer,0,sizeof(buffer));
+		int bytes_read = recv(client, buffer, BUFFER_SIZE, 0);
+		std::string message(buffer,bytes_read);
+		if (message == "/bye") {
+			close(client);
+			break;
+		}
+		std::cout << message << std::endl;
+		
+	}
+}
+
+void send_message(int client) {
+
 }
 
 int main(int argc, char *argv[])
 {
 	sockaddr_in addr;
-	memset(&addr, 0, sizeof(addr));
+	std::memset(&addr, 0, sizeof(addr));
     	addr.sin_family = AF_INET;
-    	addr.sin_port = htons(8080);
+    	addr.sin_port = htons(PORT);
 
 	addr.sin_addr.s_addr = INADDR_ANY;
 	
@@ -29,7 +45,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	else {
-		std::cout << "Port is open" << std::endl;
+		std::cout << "Port " << PORT << " is open" << std::endl;
 	}
 
 	if (listen(socket_fd,2) == 0) {
@@ -41,12 +57,10 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 		else {
-			std::cout << "Succes" << std::endl;
+			std::cout << "Connect" << std::endl;
 		
-			char buffer[BUFFER_SIZE];
-			int bytes_read = recv(client, buffer, BUFFER_SIZE, 0);
-			std::cout << buffer << std::endl;
-			close(client);
+			recieve_message(client);
+			close(socket_fd);
 			return 0;
 		}
 	}

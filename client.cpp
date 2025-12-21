@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <cstring>
 
 #define BUFFER_SIZE 2048
 
@@ -25,17 +26,22 @@ void server_connect(char *server_ip, int socket_fd) {
 
 }
 
+void server_message() {
+
+}
+
 int main(int argc, char *argv[])
 {
 	int socket_fd;
 	std::string command;
 	std::string buffer;
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	char serv[13] = "127.0.0.1";
+	char serv[] = "127.0.0.1";
 	
 	std::cout << "Hello" << std::endl;
 
 	while (1) {
+		std::cout << "> ";
  		getline(std::cin, buffer);
 		if (buffer == "/exit") {
 			break;
@@ -44,7 +50,6 @@ int main(int argc, char *argv[])
 			server_connect(serv, socket_fd);
 		}
 		else {
- 			std::cout << "Отправил ваше сообщение: " << buffer << std::endl;
  			send(socket_fd, buffer.c_str(), buffer.size(), 0);
 		}
 	}
