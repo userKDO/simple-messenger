@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic
+CXXFLAGS = -std=c++23 -Wall -Wextra -pedantic -O3
 TARGETS = server client
 OBJ_SERVER = server.o
 OBJ_CLIENT = client.o

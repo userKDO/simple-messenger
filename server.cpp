@@ -29,7 +29,7 @@ void send_message(int client) {
 
 }
 
-int main(int argc, char *argv[])
+int main()
 {
 	sockaddr_in addr;
 	std::memset(&addr, 0, sizeof(addr));
