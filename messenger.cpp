@@ -1,19 +1,22 @@
 #include <sys/socket.h>
-#include <unistd.h>
 #include "GUI.h"
 #include "NET.h"
-#include <thread>
 #include <iostream>
+#include <thread>
+#include <unistd.h>
+#include <limits>
 
 int main()
 {
     int choice;
     std::cout << "1 - server\n2 - client\n> ";
     std::cin >> choice;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     GUI::AskPort();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    int socket_fd;
+    int socket_fd = -1;
 
     if (choice == 1)
     {
@@ -22,20 +25,42 @@ int main()
     else
     {
         GUI::AskIP();
-        socket_fd = Client::connectToPeer();
+		//std::cout; //
+        socket_fd = Client::Connect();
     }
 
-    std::thread receiver(Server::receiveMsg, socket_fd);
+    if (socket_fd < 0)
+    {
+        std::cerr << "Connection failed\n";
+        return 1;
+    }
+
+    std::thread receiver(Server::ReceiveLoop, socket_fd);
 
     std::string msg;
-    while (true)
-    {
-        std::getline(std::cin, msg);
-        if (msg == "exit") break;
-        send(socket_fd, msg.c_str(), msg.size(), 0);
-    }
+	while (true)
+	{
+		std::cout << "> ";
+		std::cout.flush();
 
-    receiver.join();
+		std::getline(std::cin, msg);
+
+		if (msg == "exit")
+			break;
+
+		if (msg.empty())
+			continue;
+
+		if (send(socket_fd, msg.c_str(), msg.size(), 0) < 0)
+		{
+			perror("send");
+			break;
+		}
+	}
+
+
     close(socket_fd);
+    receiver.join();
+    return 0;
 }
 
