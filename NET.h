@@ -4,12 +4,12 @@ class Server
 {
 public:
     static int StartServer();
-    static void receiveMsg(int socket_fd);
+    static void ReceiveLoop(int socket_fd);
 };
 
 class Client
 {
 public:
-    static int connectToPeer();
+    static int Connect();
 };
 
