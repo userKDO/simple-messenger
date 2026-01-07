@@ -5,6 +5,9 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <cstring>
+#include <vector>
+#include <thread>
+#include <mutex>
 
 #define BUFFER_SIZE 2048
 #define PORT 8080
@@ -49,7 +52,7 @@ int main()
 	}
 
 	if (listen(socket_fd,2) == 0) {
-		std::cout << "Listen..." << std::endl;
+		std::cout << "Listening..." << std::endl;
 		int client;
 		if ((client = accept(socket_fd, nullptr, nullptr)) < 0) {
 			std::cout << "can't make the connection" << std::endl;
@@ -57,7 +60,7 @@ int main()
 			return -1;
 		}
 		else {
-			std::cout << "Connect" << std::endl;
+			std::cout << "Connect " << client << std::endl;
 		
 			recieve_message(client);
 			close(socket_fd);
