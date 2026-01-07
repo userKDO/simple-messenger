@@ -1,6 +1,6 @@
 #include <sys/socket.h>
 #include "GUI.h"
-#include "NET.h"
+#include "TCP/NET.h"
 #include <iostream>
 #include <thread>
 #include <unistd.h>
