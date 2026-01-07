@@ -1,5 +1,5 @@
 #include "NET.h"
-#include "GUI.h"
+#include "../GUI.h"
 #include <iostream>
 #include <unistd.h>
 #include <arpa/inet.h>
