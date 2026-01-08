@@ -1,70 +1,82 @@
 #include <iostream>
 #include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
+#include <unistd.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
-#include <cstring>
+#include <sys/socket.h>
 
-#define BUFFER_SIZE 2048
-#define PORT 8080
+bool sendMessage(int sock, const std::string& msg)
+{
+    uint32_t len = htonl(msg.size());
 
-void server_connect(char *server_ip, int socket_fd) {
+    // send length
+    if (send(sock, &len, sizeof(len), 0) != sizeof(len))
+        return false;
 
+    // send payload
+    size_t total = 0;
+    while (total < msg.size())
+    {
+        ssize_t sent = send(
+            sock,
+            msg.data() + total,
+            msg.size() - total,
+            0
+        );
+
+        if (sent <= 0)
+            return false;
+
+        total += sent;
+    }
+
+    return true;
+}
+
+int server_connect(int client_socket, char *server_ip, int port) // connect to server
+{
 	sockaddr_in addr;
  	addr.sin_family = AF_INET;
- 	addr.sin_port = htons(PORT); 
+ 	addr.sin_port = htons(port); 
  	addr.sin_addr.s_addr = inet_addr(server_ip);
 
-	std::cout << server_ip << std::endl;
-
-	if(connect(socket_fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-		std::cout << "I can't connect" << std::endl;
+	if(connect(client_socket, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+		return 1;
 	}
 	else {
-		std::cout << "I connect" << std::endl;
-	}
-
-}
-
-void server_message() {
-
-}
-
-void in_chat(int socket_fd, std::string buffer) {
-	while (1) {
-		std::cout << "> ";
-		getline(std::cin, buffer);
-		if (buffer == "/close") {
-			break;
-		}
-		send(socket_fd, buffer.c_str(), buffer.size(),0);
+		std::cout << "Connection succsess" << std::endl;
+		return 0;
 	}
 }
 
 int main()
 {
-	char serv[] = "127.0.0.1";
-	int socket_fd;
-	std::string command;
-	std::string buffer;
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	char *server_ip = /*"127.0.0.1";*/"10.8.1.2";
+	int port = 8080;
+	int client_socket = socket(AF_INET, SOCK_STREAM, 0);
+	std::string message;
 	
-	std::cout << "Welcome" << std::endl;
+	if (client_socket < 0) {
+		std::cout << "Socket initialization error" << std::endl;
+		return 1;
+	}
 
-	while (1) {
-		std::cout << "[Menu] > ";
- 		getline(std::cin, buffer);
-		if (buffer == "/exit") {
+	while(server_connect(client_socket, server_ip, port) > 0) {
+		std::cout << "Can't connect to the server" << std::endl;
+		sleep(2);
+	}
+	
+	while(1) {
+		std::cout << "> ";
+		std::getline(std::cin, message);
+
+		if (message == "/exit") {
 			break;
 		}
-		else if (buffer == "/connect") {
-			server_connect(serv, socket_fd);
-			in_chat(socket_fd, buffer);
-		}
 		else {
-			std::cout << "Please, write somthing normal" << std::endl;
+			sendMessage(client_socket, message);
 		}
 	}
-  	return 0;
+	
+	close(client_socket);
+	return 0;
 }
