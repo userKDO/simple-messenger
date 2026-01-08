@@ -1,0 +1,17 @@
+[2026-01-09 06:48:26] [INFO] Server starting on port 8080
+[2026-01-09 06:48:26] [INFO] Server listening
+[2026-01-09 06:48:32] [INFO] Client connected, fd=5
+[2026-01-09 06:52:46] [INFO] Server starting on port 8080
+[2026-01-09 06:52:46] [INFO] Server listening
+[2026-01-09 06:52:55] [INFO] Client connected, fd=5
+[2026-01-09 06:55:16] [INFO] Server starting on port 8080
+[2026-01-09 06:55:16] [INFO] Server listening
+[2026-01-09 06:55:23] [INFO] Client connected, fd=5
+[2026-01-09 06:56:16] [INFO] Server starting on port 8080
+[2026-01-09 06:56:16] [INFO] Server listening
+[2026-01-09 06:56:19] [INFO] Client connected, fd=5
+[2026-01-09 06:56:22] [INFO] Message received: help
+[2026-01-09 06:56:24] [INFO] Message received: me
+[2026-01-09 06:56:26] [INFO] Message received: plx
+[2026-01-09 06:56:27] [INFO] Message received: pls
+[2026-01-09 06:56:30] [INFO] Message received: please
