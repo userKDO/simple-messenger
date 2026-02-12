@@ -50,10 +50,12 @@ bool client_run(const char* ip, int port)
 	std::cout << "[SYS] Connected\n";
 
 	while(true) {
+		sleep(1);
 		std::cout << "> ";
 		std::getline(std::cin, msg);
 
 		if (msg == "/exit") {
+			sendMessage(sock, msg);
 			break;
 		}
 
